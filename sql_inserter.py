@@ -54,9 +54,10 @@ try:
             longitude = row[4].strip()
 
             # 시설 정보 저장
-            query = f"INSERT INTO pet_facility (name, pet_facility_type_id, address, location, created_date, modified_date) " \
-                    f"VALUES('{hospital_name}', 1, '{hospital_address}', POINT{longitude, latitude}, now(), now())"
-            cur.execute(query)
+            query = "INSERT INTO pet_facility (name, pet_facility_type_id, address, location, created_date, modified_date) " \
+                    "VALUES (%s, %s, %s, ST_GeomFromText(%s, 4326), now(), now())"
+
+            cur.execute(query, (hospital_name, 1, hospital_address, f'POINT({latitude} {longitude})'))
 
             # 운영시간정보도 있다면, 운영시간정보도 저장한다
             if hospital_open_hour:
